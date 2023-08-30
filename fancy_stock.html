@@ -1,0 +1,324 @@
+<!-- Dimensions: 62mm x 120mm
+Built for 62mm labels for the Brother QL-820NWB printer
+for the continuous rolls of 62mm paper (black or black/red)
+Suggest using with https://github.com/inventree/inventree-brother-plugin
+
+Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
+-->
+
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252"><style>
+    /*@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css");*/
+
+    @page {
+        width: 62mm;
+        height: 120mm;
+        padding: 0mm;
+        margin: 0px 0px 0px 0px;
+    }
+
+    img {
+        image-rendering: pixelated;
+        /* opacity: 0.8; */
+    }
+
+    body {
+        font-size: 8pt;
+        margin: 1mm 1mm;
+    }
+
+    /* main {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: stretch;
+        width: 62mm;
+        height: 120mm;
+    } */
+
+    .row-1 {
+        display: flex;
+        width: 100%;
+        background-color: #9f9;
+        background: linear-gradient(342deg, rgba(2,0,36,1) 0%, rgba(208,207,214,1) 30%, rgba(255,255,255,1) 100%);
+        justify-content: space-between;
+        align-items: center;
+        font-family: sans-serif;
+    }
+
+    .large {
+        font-size: 10pt;
+    }
+
+    .small {
+        font-size: 7pt;
+    }
+
+    .smaller {
+        font-size: 5.5pt;
+    }
+
+    .logo {
+        font-family: sans-serif;
+        color: #333;
+        line-height: 3mm;
+    }
+
+    .logo b {
+        font-stretch: condensed;
+        font-size: 5mm;
+        color: #000;
+    }
+
+    .today {
+        font-size: 3mm;
+        color: white;
+    }
+
+    .row {
+        margin-top: 1mm;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    
+    .row * {
+        margin-right: 2mm;
+    }
+
+    dt {
+        font-weight: 900;
+    }
+
+    .muted {
+        color: #555;
+    }
+
+    .inline-image {
+        height: 4mm;
+        max-width: 14mm;
+        object-fit: contain;
+    }
+
+    .box {
+        font-size: 125%;
+        border: 1px solid #333;
+        border-radius: 1mm;
+        margin-left: 2mm;
+        padding: 0.3mm;
+
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        overflow: hidden;
+
+        display: inline;
+        vertical-align: middle;
+    }
+
+    .last-row {
+        flex-grow: 1;
+
+        display: flex;
+        width: 100%;
+        justify-content: space-evenly;
+    }
+
+    .barcode {
+        max-height: 7mm;
+        z-index: 100;
+        align-self: flex-start;
+        flex-basis: 60%;
+    }
+
+    .qr {
+        max-height: 20mm;
+        object-fit: contain;
+        width: 100%;
+    }
+
+    .red {
+        color: red;
+    }
+
+    .svg-inline--fa {
+        height: 2mm;
+    }
+
+    .fade_rule {
+        height: 0.5px;
+        background-color: #CCC;
+        width: 100%;
+        margin: 2mm auto;
+        background: linear-gradient(left , white 2%, #777 50%, white 98%);
+   }
+</style>
+</head><body>
+{% load barcode %}
+{% load report %}
+{% load l10n %}
+
+<main>
+
+<div class="row-1">
+    <div class="logo" style="display: flex; align-items: center">
+        <div style="display:flex;flex-direction: column; margin-right: 4mm;">
+            <div style="letter-spacing: -0.2mm;"><b>E</b>lec</div>
+            <div style="letter-spacing: 0.5mm;"><b>T</b><span>ronics</span></div>
+        </div>
+        <div><b>L</b>ab</div>
+    </div>
+    <div class"stock-item">
+        Stock Item
+    </div>
+    <div class="today">
+        {% now "Y-m" %}
+    </div>
+</div>
+
+{% if item.part.IPN %}
+<div class="row">
+    <dt>IPN: </dt> <code>{{ item.part.IPN }}</code>
+</div>
+{% endif %}
+
+<div class="row">
+    <dt>Category: </dt> {{ item.part.category.name }}
+</div>
+
+<div class="row">
+    <dt>Item: </dt> <span class="large">{{ item.part.name }}</span>
+</div>
+
+{% if item.part.description and item.part.description.strip|lower != item.part.name.strip|lower %}
+<div class="row">
+    <span class="muted">{{ item.part.description|truncatechars:80 }}</span>
+</div>
+{% endif %}
+
+{% if item.owner %}
+<div class="row">
+    <dt>Owner: </dt> {{ item.owner.user.first_name }} {{ item.owner.user.last_name }}
+</div>
+{% elif item.part.responsible %}
+<div class="row">
+    <dt>Responsible: </dt> {{ item.part.responsible.user.first_name }} {{ item.part.responsible.user.last_name }}
+</div>
+{% endif %}
+
+{% if item.supplier_part and item.supplier_part.manufacturer_part.manufacturer %}
+<div class="row">
+    <dt>Manufacturer: </dt>
+    {% if item.supplier_part.manufacturer_part.manufacturer.image %}
+    <div>
+        <img class="inline-image" src="file:///home/inventree/data/media/{{ item.supplier_part.manufacturer_part.manufacturer.image }}">
+    </div>
+    {% endif %}
+    {{ item.supplier_part.manufacturer_part.manufacturer.name }}
+    <span class="muted"> ({{ item.supplier_part.manufacturer_part.MPN }})</span>
+</div>
+{% endif %}
+
+{% if item.part.revision %}
+<div class="row">
+    <dt>Revision: </dt> {{ item.part.revision }}
+</div>
+{% endif %}
+
+<!-- <div class="space" style="height: 3mm; border-top">
+</div> -->
+<div class="fade_rule"></div>  
+
+<div class="row">
+    <dt>Quantity: </dt>
+    <div class="" style="color: gray; margin: 0;">
+        <svg class="svg-inline--fa fa-boxes fa-w-18 icon-header" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="boxes" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="#777777" d="M560 288h-80v96l-32-21.3-32 21.3v-96h-80c-8.8 0-16 7.2-16 16v192c0 8.8 7.2 16 16 16h224c8.8 0 16-7.2 16-16V304c0-8.8-7.2-16-16-16zm-384-64h224c8.8 0 16-7.2 16-16V16c0-8.8-7.2-16-16-16h-80v96l-32-21.3L256 96V0h-80c-8.8 0-16 7.2-16 16v192c0 8.8 7.2 16 16 16zm64 64h-80v96l-32-21.3L96 384v-96H16c-8.8 0-16 7.2-16 16v192c0 8.8 7.2 16 16 16h224c8.8 0 16-7.2 16-16V304c0-8.8-7.2-16-16-16z"></path></svg>
+    </div>
+    {{ item.quantity|stringformat:"d" }} <span class="muted">{{ item.part.units }}</span>
+</div>
+
+{% if item.batch %}
+<div class="row">
+    <dt>Batch number: </dt> <code>{{ item.batch }}</code></span>
+</div>
+{% endif %}
+
+{% if item.serial %}
+<div class="row">
+    <dt>Serial number: </dt> <span class="box"><code>#{{ item.serial }}</code></span>
+</div>
+{% endif %}
+
+{% if item.status != StockStatus.OK %}
+<div class="row red">
+    <dt>Status: </dt>
+    {% for it in StockStatus.list %}
+        {% if item.status == it.key %} {{ it.label }} {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if item.expiry_date %}
+<div class="row red">
+    <dt>Expiry date: </dt> {{ item.expiry_date | date:"Y-m-d" }}
+</div>
+{% endif %}
+
+{% if item.notes %}
+<div class="row">
+    <dt>Notes:</dt> <span class="small">{{ item.notes |truncatechars:100 }}</span>
+</div>
+{% endif %}
+
+{% if item.purchase_order %}
+<div class="row">
+    <dt>Purchased on:</dt> {{ item.purchase_order.creation_date | date:"Y-m-d" }} ({{ item.purchase_order.reference }})
+    {% if not item.owner and not item.part.responsible %}
+        {% if item.purchase_order.responsible %}
+            <span class="smaller">
+                by
+                {{ item.purchase_order.responsible.owner.first_name }} {{ item.purchase_order.responsible.owner.last_name }}
+                {{ item.purchase_order.responsible.owner.name }}
+            </span>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% if item.purchase_price %}
+<div class="row">
+    <dt>Purchase Price:</dt> {{ item.purchase_price }}
+</div>
+{% endif %}
+{% endif %}
+
+<div class="row">
+    <dt>Location: </dt> {{ item.location.name }}</span>
+</div>
+
+<div class="space" style="height: 5mm;">
+</div>
+
+<div class="last-row">
+    <img class='barcode' src='{% barcode part.barcode module_width=0.5 font_size=0 %}'>
+    <div style="transform: rotate(-90deg);font-size: 6pt;">
+        <div class="id">
+            {% if uid %}{{ uid }}
+            {% else %}{{ item.id }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if item.part.image %}
+<!-- <div class="row"> -->
+    <img class='qr' src="file:///home/inventree/data/media/{{ part.image }}" />
+    <!-- {% else %}
+    <img class='qr' src="{% qrcode location.format_barcode %}" /> -->
+<!-- </div> -->
+{% endif %}
+
+</body>
+
+</main>
+
+</html>
