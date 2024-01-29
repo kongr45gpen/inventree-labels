@@ -5,7 +5,7 @@ Suggest using with https://github.com/inventree/inventree-brother-plugin
 
 Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
 -->
-
+ 
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=windows-1252"><style>
     /*@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css");*/
@@ -40,7 +40,7 @@ Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
         display: flex;
         width: 100%;
         background-color: #9f9;
-        background: linear-gradient(342deg, rgba(2,0,36,1) 0%, rgba(208,207,214,1) 30%, rgba(255,255,255,1) 100%);
+        background: black;
         justify-content: space-between;
         align-items: center;
         font-family: sans-serif;
@@ -60,18 +60,22 @@ Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
 
     .logo {
         font-family: sans-serif;
-        color: #333;
+        color: #ccc;
         line-height: 3mm;
     }
 
     .logo b {
         font-stretch: condensed;
         font-size: 5mm;
-        color: #000;
+        color: #fff;
     }
 
     .today {
         font-size: 3mm;
+        color: white;
+    }
+
+    .stock-item {
         color: white;
     }
 
@@ -163,12 +167,12 @@ Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
 <div class="row-1">
     <div class="logo" style="display: flex; align-items: center">
         <div style="display:flex;flex-direction: column; margin-right: 4mm;">
-            <div style="letter-spacing: -0.2mm;"><b>E</b>lec</div>
-            <div style="letter-spacing: 0.5mm;"><b>T</b><span>ronics</span></div>
+            <div style="letter-spacing: -0.2mm;"><b>C</b>ube</div>
+            <div style="letter-spacing: 0.5mm;"><b>S</b><span>at</span></div>
         </div>
         <div><b>L</b>ab</div>
     </div>
-    <div class"stock-item">
+    <div class="stock-item">
         Stock Item
     </div>
     <div class="today">
@@ -272,14 +276,19 @@ Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
 
 {% if item.purchase_order %}
 <div class="row">
-    <dt>Purchased on:</dt> {{ item.purchase_order.creation_date | date:"Y-m-d" }} ({{ item.purchase_order.reference }})
+    <dt>Purchased on:</dt> {{ item.purchase_order.creation_date | date:"Y-m-d" }} ({{ item.purchase_order.reference }})&ensp;
     {% if not item.owner and not item.part.responsible %}
         {% if item.purchase_order.responsible %}
             <span class="smaller">
                 by
-                {{ item.purchase_order.responsible.owner.first_name }} {{ item.purchase_order.responsible.owner.last_name }}
-                {{ item.purchase_order.responsible.owner.name }}
+                <em>{{ item.purchase_order.responsible.owner.first_name }} {{ item.purchase_order.responsible.owner.last_name }}
+                {{ item.purchase_order.responsible.owner.name }}</em>
             </span>
+        {% endif %}
+        {% if item.purchase_order.project_code %}
+        <span class="smaller">
+            for
+            <em>{{ item.purchase_order.project_code.code }}</em>
         {% endif %}
     {% endif %}
 </div>
@@ -291,9 +300,49 @@ Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
 {% endif %}
 {% endif %}
 
+{% if item.build %}
+<div class="row">
+    <dt>Built on:</dt> {{ item.build.completion_date | date:"Y-m-d" }} ({{ item.build.reference }})&ensp;
+    {% if not item.owner and not item.part.responsible %}
+        {% if item.build.responsible %}
+            <span class="smaller">
+                by
+                <em>{{ item.build.responsible.owner.first_name }} {{ item.build.responsible.owner.last_name }}
+                {{ item.build.responsible.owner.name }}</em>
+            </span>
+        {% endif %}
+        {% if item.build.project_code %}
+        <span class="smaller">
+            for
+            <em>{{ item.build.project_code.code }}</em>
+        {% endif %}
+    {% endif %}
+</div>
+{% endif %}
+
+{% if item.sales_order %}
+<div class="row">
+    <dt>Dispatched to:</dt> 
+    {% if item.sales_order.customer.image %}
+    <div>
+        <img class="inline-image" src="file:///home/inventree/data/media/{{ item.sales_order.customer.image }}">
+    </div>
+    {% endif %}
+
+    <code>{{ item.sales_order.customer.name }}</code>
+
+    &ensp;<span class="smaller"> ({% if item.sales_order.target_date %}{{ item.sales_order.target_date | date:"Y-m-d" }}, {% endif %}{{ item.sales_order.reference }})</span>
+
+    &emsp; <span class="smaller muted">{{ item.sales_order.description }}</span>
+    
+</div>
+{% endif %}
+
+{% if item.location %}
 <div class="row">
     <dt>Location: </dt> {{ item.location.name }}</span>
 </div>
+{% endif %}
 
 <div class="space" style="height: 5mm;">
 </div>
