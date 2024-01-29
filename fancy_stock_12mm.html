@@ -1,0 +1,234 @@
+<!-- Dimensions: 62mm x 120mm
+Built for 62mm labels for the Brother QL-820NWB printer
+for the continuous rolls of 62mm paper (black or black/red)
+Suggest using with https://github.com/inventree/inventree-brother-plugin
+
+Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
+-->
+ 
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252"><style>
+    /*@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css");*/
+
+    @page {
+        width: 12mm;
+        height: 12mm;
+        padding: 0mm;
+        margin: 0px 0px 0px 0px;
+    }
+
+    img {
+        image-rendering: pixelated;
+        /* opacity: 0.8; */
+    }
+
+    body {
+        font-size: 5pt;
+        margin: 1mm 1mm;
+        line-height: 1.1;
+    }
+
+    .muted {
+        color: #555;
+    }
+
+    .small {
+        font-size: 4.5pt;
+        line-height: 1;
+    }
+
+    .smaller {
+        font-size: 3.5pt;
+        line-height: 0.9;
+    }
+
+    .category {
+        font-size: 3pt;
+        line-height: 0.9;
+        overflow-wrap: normal;
+        word-break: keep-all;
+        text-align: center;
+        overflow: hidden;
+
+        color: #fff;
+        background-color: black;
+
+        z-index: -2;
+        position: relative;
+        padding-bottom: 0.3mm;
+
+        border-top-left-radius: 0.2mm;
+        border-top-right-radius: 0.2mm;
+
+        max-height: 1.5mm;
+
+        font-family: Montserrat, Ubuntu, "Fira Sans", Roboto, "Open Sans", sans-serif;
+    }
+
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: stretch;
+        
+        word-break: break-all;
+        overflow-wrap: anywhere;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .circlecontainer {
+        height: 0;
+        position: relative;
+
+        top: -1mm;
+    }
+
+    .circle {
+        position: relative;
+        z-index: -1;
+        display: inline-block;
+
+        width: 1mm;
+        height: 1.1mm;
+        border-radius: 100%;
+
+        background-color: white;
+
+        margin: 0;
+        padding: 0;
+
+        top: -1mm;
+    }
+
+    .image {
+        width: 10mm;
+        height: 10mm;
+        object-fit: contain;
+        object-position: center;
+        margin: 0;
+        padding: 0;
+
+        position: absolute;
+    }
+
+    .image-cover {
+        width: 10mm;
+        height: 10mm;
+        object-fit: contain;
+        object-position: center;
+        margin: 0;
+        padding: 0;
+
+        position: absolute;
+
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .modifiers {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: stretch;
+
+        max-height: 2mm;
+        overflow: hidden;
+    }
+
+    .modifiers > * {
+        border-radius: 0.3mm;
+        border: 0.1mm solid black;
+
+        text-align: center;
+
+        height: 2mm;
+        overflow: hidden;
+        text-overflow: clip;
+        text-wrap: none;
+    }
+
+    .red {
+        background-color: #f44336;
+
+        font-weight: bold;
+        font-family: Montserrat, Ubuntu, "Fira Sans", Roboto, "Open Sans", sans-serif;
+        font-size: 4.5pt;
+
+        overflow: hidden;
+    }
+
+    .box {
+        border-radius: 0.3mm;
+        background-color: #ccc;
+        font-weight: bold;
+        font-size: 4pt;
+    }
+
+    @media screen {
+        main {
+            width: 12mm;
+            /* height: 24mm; */
+            /*background-color: yellow;*/
+        }
+    }
+
+</style>
+</head><body>
+{% load barcode %}
+{% load report %}
+{% load l10n %}
+
+{% if item.part.image %}
+    <img class="image" src="file:///home/inventree/data/media/{{ part.image }}" />
+    <div class="image-cover"></div>
+{% endif %}
+
+<main>
+
+{% if item.part.category %}
+    <div class="category">
+        {{ item.part.category.name }}
+    </div>
+
+    <!-- Fancy Border -->
+    <div class="circlecontainer">
+        <div class="circle" style="left: 1mm;"></div>
+        <div class="circle" style="left: 2mm;"></div>
+        <div class="circle" style="left: 2.2mm;"></div>
+        <div class="circle" style="left: 2.8mm;"></div>
+    </div>
+{% endif %}
+
+<div class="modifiers">
+
+    {% if item.serial %}
+    <span class="box"><code><span class="smaller muted">#</span>{{ item.serial }}</code></span>
+    {% endif %}
+
+    {% if item.status != StockStatus.OK %}
+    <div class="red">
+        {% for it in StockStatus.list %}
+            {% if item.status == it.key %}{{ it.label }}{% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+{% if item.part.IPN %}
+<div class="row">
+    <code>{{ item.part.IPN }}</code>
+    <div class="smaller muted">
+        {{ item.part.name|truncatechars:80}}
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <code>{{ item.part.name|truncatechars:100}}</code>
+</div>
+{% endif %}
+
+
+</main>
+
+</html>

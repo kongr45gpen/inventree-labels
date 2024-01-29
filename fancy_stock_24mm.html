@@ -1,0 +1,277 @@
+<!-- Dimensions: 62mm x 120mm
+Built for 62mm labels for the Brother QL-820NWB printer
+for the continuous rolls of 62mm paper (black or black/red)
+Suggest using with https://github.com/inventree/inventree-brother-plugin
+
+Font-Awesome icons licensed under SIL OFL 1.1, Copyright Font Awesome
+-->
+ 
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252"><style>
+    /*@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css");*/
+
+    @page {
+        width: 24mm;
+        height: 14mm;
+        padding: 0mm;
+        margin: 0px 0px 0px 0px;
+    }
+
+    img {
+        image-rendering: pixelated;
+        /* opacity: 0.8; */
+    }
+
+    body {
+        font-size: 5.5pt;
+        margin: 1mm 1mm;
+        line-height: 1.1;
+
+        overflow: hidden;
+    }
+
+    .muted {
+        color: #555;
+    }
+
+    .small {
+        font-size: 4.5pt;
+        line-height: 1;
+    }
+
+    .smaller {
+        font-size: 3.5pt;
+        line-height: 0.9;
+    }
+
+    .smallest {
+        font-size: 2.5pt;
+        line-height: 0.9;
+    }
+
+    .smallesest {
+        font-size: 2pt;
+        line-height: 0.9;
+    }
+
+    .category {
+        font-size: 3pt;
+        line-height: 0.9;
+        overflow-wrap: normal;
+        word-break: keep-all;
+        text-align: center;
+        overflow: hidden;
+
+        color: #fff;
+        background-color: black;
+
+        z-index: -2;
+        position: relative;
+        padding: 0.2mm 1mm;
+
+        border-top-left-radius: 0.2mm;
+        border-top-right-radius: 0.2mm;
+
+        max-height: 1.8mm;
+
+        font-family: Montserrat, Ubuntu, "Fira Sans", Roboto, "Open Sans", sans-serif;
+    }
+
+    main {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: stretch;
+        
+        word-break: break-all;
+        overflow-wrap: anywhere;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    main > * {
+        flex: 1 100 12mm;
+    }
+
+    article {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: stretch;
+        
+        word-break: break-all;
+        overflow-wrap: anywhere;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .circlecontainer {
+        height: 0;
+        position: relative;
+
+        top: -1mm;
+    }
+
+    .circle {
+        position: relative;
+        z-index: -1;
+        display: inline-block;
+
+        width: 1.3mm;
+        height: 1.3mm;
+        border-radius: 100%;
+
+        background-color: white;
+
+        margin: 0;
+        padding: 0;
+
+        top: -0.6mm;
+    }
+
+    .image {
+        max-width: 9mm;
+        height: 10mm;
+        object-fit: contain;
+        object-position: center;
+        /* margin-right: 6mm; */
+    }
+
+    .modifiers {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: stretch;
+
+        max-height: 2.2mm;
+        overflow: hidden;
+
+        margin-top: 0.2mm;
+    }
+
+    .modifiers > * {
+        border-radius: 0.3mm;
+        border: 0.1mm solid black;
+
+        text-align: center;
+
+        height: 2mm;
+        overflow: hidden;
+        text-overflow: clip;
+        text-wrap: none;
+    }
+
+    .red {
+        background-color: #f44336;
+
+        font-weight: bold;
+        font-family: Montserrat, Ubuntu, "Fira Sans", Roboto, "Open Sans", sans-serif;
+        font-size: 4.5pt;
+
+        overflow: hidden;
+    }
+
+    .box {
+        border-radius: 0.3mm;
+        background-color: #ccc;
+        font-weight: bold;
+        font-size: 4pt;
+    }
+
+    .extra-info {
+        text-align: center;
+    }
+
+    @media screen {
+        main {
+            width: 24mm;
+            /* height: 24mm; */
+            /*background-color: yellow;*/
+        }
+    }
+
+</style>
+</head><body>
+{% load barcode %}
+{% load report %}
+{% load l10n %}
+
+{% if item.part.category %}
+    <div class="category">
+        {{ item.part.category.name }}
+        <span class="smallesest">
+            {% if uid %}{{ uid }}
+            {% else %}{{ item.id }}
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- Fancy Border -->
+    <div class="circlecontainer">
+        <div class="circle" style="left: -1mm;"></div>
+        <div class="circle" style="left: 19.8mm;"></div>
+    </div>
+{% endif %}
+
+<main>
+
+{% if item.part.image %}
+    <img class="image" src="file:///home/inventree/data/media/{{ part.image }}" />
+{% endif %}
+
+
+<article>
+
+<div class="modifiers">
+
+    {% if item.serial %}
+    <span class="box"><code><span class="smaller muted">#</span>{{ item.serial }}</code></span>
+    {% endif %}
+
+    {% if item.status != StockStatus.OK %}
+    <div class="red">
+        {% for it in StockStatus.list %}
+            {% if item.status == it.key %}{{ it.label }}{% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+{% if item.part.IPN %}
+<div class="row">
+    <code>{{ item.part.IPN }}</code>
+    <div class="small muted">
+        {{ item.part.name|truncatechars:80}}
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <code>{{ item.part.name|truncatechars:100}}</code>
+</div>
+{% endif %}
+
+</article>
+</main>
+
+<div class="extra-info muted smallest">
+    {% if item.expiry_date %}
+        Expires <strong>{{ item.expiry_date | date:"Y-m-d" }}</strong>&ensp;
+    {% endif %}
+
+    {% if item.owner %}
+        Owner: {{ item.owner.user.first_name }} {{ item.owner.user.last_name }}&ensp;
+    {% elif item.part.responsible %}
+        Resp.: {{ item.part.responsible.user.first_name }} {{ item.part.responsible.user.last_name }}&ensp;
+    {% endif %}
+
+    {% if item.purchase_order %}
+        P {{ item.purchase_order.creation_date | date:"Y-m-d" }}
+        &ensp;
+    {% endif %}
+    {% if item.build %}
+        B {{ item.build.completion_date | date:"Y-m-d" }}
+    {% endif %}
+</div>
+
+</html>
